@@ -1,31 +1,54 @@
 <template>
   <div>
-    <h2>Translate into:</h2>
-    <div v-if="!loading" class="option__list">
-      <div
-        class="option__pane"
-        v-for="language in availableLanguages.languages"
-        :key="language.id"
-      >
-        <!-- <input class="option__input--hidden" /> -->
-        <template v-if="language.is_active && !language.is_default">
-          <label
-            :class="getOptionClasses(language.id)"
-            @click="
-              toggleLanguage(language.id, language.codename, language.name)
-            "
+    <h2>Translation Connector</h2>
+    <div v-if="loading" class="form__loader">Loading...</div>
+    <div v-if="!loading && isDefaultLanguage">
+      <div class="option__list">
+        <div
+          class="option__pane"
+          v-for="language in availableLanguages.languages"
+          :key="language.id"
+        >
+          <!-- <input class="option__input--hidden" /> -->
+          <template v-if="language.is_active && !language.is_default">
+            <label
+              :class="getOptionClasses(language.id)"
+              @click="
+                toggleLanguage(language.id, language.codename, language.name)
+              "
+            >
+              <span class="option__label">{{ language.name }}</span>
+            </label>
+            <span :class="getStatusClasses(language.id)">{{
+              getStatusText(language.id)
+            }}</span>
+          </template>
+        </div>
+      </div>
+      <div v-if="hasTranslationStarted() && !hasTranslationFinished()">
+        <h4>Translation seem stuck?</h4>
+        <p>
+          <button
+            class="btn btn--secondary"
+            @click="resubmit()"
+            :disabled="resubmitInProgress"
           >
-            <span class="option__label">{{ language.name }}</span>
-          </label>
-          <span :class="getStatusClasses(language.id)">{{
-            getStatusText(language.id)
-          }}</span>
-        </template>
+            Resubmit any unfinished translation requests
+          </button>
+        </p>
+      </div>
+      <div v-if="message">
+        {{ message }}
+      </div>
+      <div v-if="element.config.debug" class="form__message">
+        <h3>Debug values</h3>
+        <p>Saved value:</p>
+        <pre>{{ savedValue }}</pre>
       </div>
     </div>
-    <pre>
-      {{ savedValue }}
-    </pre>
+    <div v-if="!loading && !isDefaultLanguage">
+      <p>You can only manage translation from the default language.</p>
+    </div>
   </div>
 </template>
 
@@ -40,7 +63,9 @@ export default {
     type: {},
     defaultVariant: {},
     selectedLanguages: [],
-    availableLanguages: []
+    availableLanguages: [],
+    message: "",
+    resubmitInProgress: false
   }),
   props: {
     context: {
@@ -64,6 +89,9 @@ export default {
       return {
         selectedLanguages: this.selectedLanguages
       }
+    },
+    isDefaultLanguage: function () {
+      return this.context.variant.id === "00000000-0000-0000-0000-000000000000"
     }
   },
   methods: {
@@ -104,12 +132,12 @@ export default {
     },
     getLanguageStatus: function (id) {
       const lang = this.selectedLanguages.find(l => l.id === id)
-      if(!lang) return {
+      if (!lang) return {
         classes: `item-status item-status--failed`,
         text: `Not selected`
       }
 
-        const wasStarted = !!lang.started
+      const wasStarted = !!lang.started
       const wasCompleted = !!lang.completed
       const isDone = wasStarted && wasCompleted
 
@@ -128,6 +156,30 @@ export default {
         text: `Not started`
       }
     },
+    resubmit: function () {
+      this.element.disabled = true
+      this.resubmitInProgress = true
+      const nextLanguageId = this.getNextLanguageId()
+      const workflowId = this.element.config.pendingWorkflowStepId
+      const url = `https://manage.kontent.ai/v2/projects/${this.context.projectId}/items/${this.context.item.id}/variants/${nextLanguageId}/workflow/${workflowId}`
+      axios.put(url, null, {
+        headers: {
+          Authorization: `Bearer ${this.element.config.cmApiKey}`
+        }
+      }).then(() => {
+        this.message = "Resubmission successful."
+      })
+    },
+    getNextLanguageId: function () {
+      const language = this.selectedLanguages.find(l => !l.completed)
+      return language ? language.id : null
+    },
+    hasTranslationStarted: function () {
+      return this.selectedLanguages.filter(l => l.started !== null).length > 0
+    },
+    hasTranslationFinished: function () {
+      return this.selectedLanguages.filter(l => l.completed === null).length === 0
+    }
   },
   watch: {
     savedValue: function () {
