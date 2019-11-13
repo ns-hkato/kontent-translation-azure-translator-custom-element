@@ -10,6 +10,10 @@ Features:
 - The UI is only shown on the default language
 - Started or completed translations tell the editor when this occured in a friendly format (e.g. "5 minutes ago")
 
+## Quick testing
+
+If you're interested in trying this out without deploying it yourself, you can use `https://kontent-translation-connector-custom-element.netlify.com/`. This is the deployed version of the master branch in this repo. **This should only be used for quick testing as it is subject to change**
+
 ## Deploying
 
 First, fork this repo. You can use whatever build/deploy process you like. Netlify is a good option since you can easily connect it to your repo and do automatic builds if/when you modify the codebase. The main command to be aware of is `npm run build`. This will do a production build of the custom element. Once complete you can deploy the contents of the `dist` folder to anywhere you want. Keep in mind that Kentico Kontent requires that the URLs be publicly available and [served over HTTPS](https://docs.kontent.ai/tutorials/develop-apps/integrate/integrating-your-own-content-editing-features#a-2--secure-hosting).
