@@ -18,7 +18,7 @@ If you're interested in trying this out without deploying it yourself, you can u
 
 First, fork this repo. You can use whatever build/deploy process you like. Netlify is a good option since you can easily connect it to your repo and do automatic builds if/when you modify the codebase. The main command to be aware of is `npm run build`. This will do a production build of the custom element. Once complete you can deploy the contents of the `dist` folder to anywhere you want. Keep in mind that Kentico Kontent requires that the URLs be publicly available and [served over HTTPS](https://docs.kontent.ai/tutorials/develop-apps/integrate/integrating-your-own-content-editing-features#a-2--secure-hosting).
 
-## Configuring
+## Configuring the Custom Element
 
 As this custom element is meant to be used across multiple content types, you should [configure the custom element](https://docs.kontent.ai/tutorials/develop-apps/integrate/integrating-your-own-content-editing-features#a-3--displaying-a-custom-element-in-kentico-kontent) inside a content snippet so you only have to configure it once.
 
@@ -39,6 +39,10 @@ The full JSON will look something like this:
     "pendingWorkflowStepId": "<YOUR_WORKFLOW_STEP_GUID>"
 }
 ```
+
+## Configuring Languages in Kontent
+
+When configuring your languages in Kontent, the translation connector relies on the language codename matching one of the [language codes supported by Microsoft's Translator API](https://docs.microsoft.com/en-us/azure/cognitive-services/translator/language-support)
 
 ## Developing
 
