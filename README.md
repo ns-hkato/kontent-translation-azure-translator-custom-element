@@ -1,4 +1,4 @@
-# Kentico Kontent Custom Element: Translation Connector
+# Kentico Kontent Custom Element: Azure Translator Text API Connector
 
 This [custom element](https://docs.kontent.ai/tutorials/develop-apps/integrate/integrating-your-own-content-editing-features) for [Kentico Kontent](https://kontent.ai) gives editors a way to configure and see the status of translations automated via the Azure Translator Text API. It's based on [VueJS](https://vuejs.org/) to enable more dynamic functionality and is intended for use with its [companion project for responding to Kontent webhooks](https://github.com/Kentico/kontent-translation-azure-translator-webhook-functions).
 
