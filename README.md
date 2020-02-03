@@ -56,3 +56,8 @@ If you plan to customize the element for your own purposes or want to contribute
 | Lint and fix files | `npm run lint` |
 
 The project is configured to run the development version over HTTPS so you can point to localhost from Kentico Kontent. This should only be done on a development project or a content type dedicated to development.
+
+## Contributors
+
+Originally contributed by [@ChristopherJennings](https://github.com/ChristopherJennings)
+
